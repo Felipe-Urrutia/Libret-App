@@ -9,180 +9,209 @@
     --border-color: #334155;
 }
 
+/* Restablecemos márgenes globales para comportamiento móvil estable */
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent; /* Elimina el cuadro azul feo al tocar en móviles */
+}
+
 body {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background-color: var(--bg-dark);
     color: var(--text-main);
     margin: 0;
-    padding: 20px;
+    padding: 12px; /* Margen reducido en móviles para ganar espacio */
     display: flex;
     flex-direction: column;
     align-items: center;
+    min-height: 100vh;
 }
 
 header {
     text-align: center;
-    margin-bottom: 24px;
+    margin-bottom: 16px;
+    margin-top: 10px;
+    width: 100%;
 }
 
 header h1 {
-    margin: 0;
-    font-size: 2.2rem;
+    margin: 4px 0 0 0;
+    font-size: 1.8rem; /* Tamaño más equilibrado para pantallas verticales */
     letter-spacing: -0.05em;
 }
 
 header p {
     color: var(--text-muted);
-    margin: 5px 0 0 0;
+    margin: 4px 0 0 0;
+    font-size: 0.9rem;
+}
+
+/* Estilo del logo adaptado para la cabecera */
+.app-logo {
+    width: 70px;
+    height: 70px;
+    border-radius: 16px;
+    margin-bottom: 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
 }
 
 .container {
     width: 100%;
-    max-width: 500px;
+    max-width: 500px; /* En PC se frena aquí, en móviles se estira al 100% */
 }
 
-/* Estilo de Tarjetas del Formulario y Búsqueda */
-.card-form,
-.search-bar {
+/* Tarjetas del Formulario y Búsqueda */
+.card-form, .search-bar {
     background: var(--bg-card);
-    padding: 20px;
+    padding: 16px; /* Padding optimizado para pantallas compactas */
     border-radius: 16px;
     border: 1px solid var(--border-color);
-    margin-bottom: 16px;
+    margin-bottom: 12px;
+    width: 100%;
 }
 
+/* Fila del formulario: Se vuelve vertical en pantallas extremadamente pequeñas si es necesario */
 .form-row {
     display: flex;
     gap: 10px;
-    margin: 8px 0;
+    margin: 10px 0;
 }
 
-textarea,
-select,
-input {
+/* Inputs optimizados a un tamaño mínimo de 16px para evitar el zoom molesto en iOS/Android */
+textarea, select, input {
     background-color: #1e293b;
     color: var(--text-main);
     border: 1px solid var(--border-color);
-    padding: 12px;
-    border-radius: 8px;
-    font-size: 0.95rem;
+    padding: 14px; /* Más acolchado para que sea fácil presionar con el dedo */
+    border-radius: 10px;
+    font-size: 16px; /* Crucial: Bloquea el zoom automático del sistema */
     width: 100%;
-    box-sizing: border-box;
+    font-family: inherit;
 }
 
-textarea:focus,
-select:focus,
-input:focus {
+textarea {
+    resize: none; /* Desactivamos el redimensionado manual que rompe el layout móvil */
+}
+
+textarea:focus, select:focus, input:focus {
     outline: none;
     border-color: #6366f1;
 }
 
+/* Botón principal estilo "Mobile-First" */
 button {
     background-color: #6366f1;
     color: white;
     font-weight: 600;
     border: none;
-    padding: 14px;
-    border-radius: 8px;
+    padding: 16px; /* Botón gordo, ideal para el pulgar */
+    border-radius: 10px;
     cursor: pointer;
     font-size: 1rem;
     width: 100%;
-    transition: background 0.2s;
+    transition: background 0.2s, transform 0.1s;
 }
 
-button:hover {
+button:active {
+    transform: scale(0.98); /* Pequeño efecto visual táctil al presionarlo */
     background-color: #4f46e5;
 }
 
-/* Barra de búsqueda dividida */
+/* Barra de búsqueda adaptada */
 .search-bar {
     display: flex;
+    flex-direction: column; /* Apilados por defecto para mejor lectura móvil */
     gap: 10px;
     padding: 12px;
 }
 
-/* Tarjetas de Notas Modernas */
+/* Tarjetas de Notas Optimizadas para lectura en pantallas verticales */
 .nota {
     background: var(--bg-card);
     border: 1px solid var(--border-color);
-    padding: 18px;
+    padding: 16px;
     margin: 12px 0;
-    border-radius: 12px;
+    border-radius: 14px;
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
 }
 
 /* Indicadores de Urgencia Laterales */
-.nota.alta {
-    border-left: 5px solid var(--alta);
-}
-
-.nota.media {
-    border-left: 5px solid var(--media);
-}
-
-.nota.baja {
-    border-left: 5px solid var(--baja);
-}
+.nota.alta { border-left: 6px solid var(--alta); }
+.nota.media { border-left: 6px solid var(--media); }
+.nota.baja { border-left: 6px solid var(--baja); }
 
 .nota-texto {
     font-size: 1.05rem;
     margin: 0;
-    padding-right: 60px;
+    padding-right: 50px; /* Deja espacio para que el texto no choque con el botón de borrar */
     word-break: break-word;
+    line-height: 1.4;
 }
 
+/* Información de la nota: Se organiza en filas compactas */
 .nota-meta {
     font-size: 0.8rem;
     color: var(--text-muted);
     display: flex;
+    flex-wrap: wrap; /* Si el texto es largo, salta de línea ordenadamente */
     align-items: center;
-    gap: 5px;
+    gap: 8px;
+    margin-top: 4px;
+    border-top: 1px solid #1e293b;
+    padding-top: 8px;
 }
 
-/* Alerta de tiempo vencido */
 .tiempo-vencido {
     color: var(--alta);
     font-weight: bold;
     animation: parpadeo 1.5s infinite;
 }
 
+/* Botón de borrado circular, grande y cómodo para el dedo */
 .btn-borrar {
     position: absolute;
-    top: 18px;
-    right: 18px;
+    top: 14px;
+    right: 14px;
     background: #22c55e;
     color: white;
     border: none;
-    padding: 6px 12px;
-    border-radius: 6px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%; /* Botón completamente redondo */
     cursor: pointer;
-    font-size: 0.85rem;
-    font-weight: bold;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 
-.btn-borrar:hover {
+.btn-borrar:active {
     background: #16a34a;
 }
 
 @keyframes parpadeo {
-
-    0%,
-    100% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0.5;
-    }
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
 }
 
-.app-logo {
-    width: 80px;
-    height: 80px;
-    border-radius: 16px;
-    margin-bottom: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+/* 📱 RESPONSIVE DESIGN: Ajustes específicos para pantallas un poco más anchas (como tablets o PC) */
+@media (min-width: 400px) {
+    body {
+        padding: 24px;
+    }
+    header h1 {
+        font-size: 2.2rem;
+    }
+    .search-bar {
+        flex-direction: row; /* En pantallas más anchas, la barra vuelve a ser horizontal */
+    }
+    .app-logo {
+        width: 80px;
+        height: 80px;
+    }
 }
