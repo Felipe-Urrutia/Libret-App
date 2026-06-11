@@ -1,35 +1,57 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Libret-App: Mi Asistente</title>
+    <title>Libret-App: Mi Asistente Pro</title>
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="./css/estilos.css">
 </head>
+
 <body>
 
-<header>
-    <h1>🧠 Mi Asistente Olvidadizo</h1>
-    <p>Apunta antes de que se te vaya la idea</p>
-</header>
+    <header>
+        <!-- Tu imagen integrada en la interfaz de la aplicación -->
+        <img src="./img/Libret-App-192.png" alt="Logo Libret-App" class="app-logo">
+        <h1>Libret-App</h1>
+        <p>Tu segundo cerebro para no olvidar nada</p>
+    </header>
 
-<div class="container">
-    <textarea id="textoNota" placeholder="¿Qué tienes que recordar?" rows="3"></textarea>
-    
-    <select id="urgenciaNota">
-        <option value="alta">🚨 ¡Urgente / Hacer YA!</option>
-        <option value="media">⏳ Importante / Luego</option>
-        <option value="baja">☕ Baja prioridad / Rutina</option>
-    </select>
-    
-    <button onclick="agregarNota()">Guardar Recordatorio</button>
+    <div class="container">
+        <!-- Formulario Avanzado -->
+        <div class="card-form">
+            <textarea id="textoNota" placeholder="¿Qué tienes que recordar?" rows="3"></textarea>
 
-    <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+            <div class="form-row">
+                <select id="urgenciaNota">
+                    <option value="alta">🚨 Alta Prioridad</option>
+                    <option value="media">⏳ Media Prioridad</option>
+                    <option value="baja">☕ Baja Prioridad</option>
+                </select>
 
-    <div id="listaNotas"></div>
-</div>
+                <input type="datetime-local" id="fechaNota" title="Fecha y hora límite">
+            </div>
 
-<script src="./js/app.js"></script>
+            <button onclick="agregarNota()">⚡ Guardar Recordatorio</button>
+        </div>
+
+        <!-- Barra de Filtros y Búsqueda -->
+        <div class="search-bar">
+            <input type="text" id="buscarInput" placeholder="🔍 Buscar en mis apuntes..." oninput="mostrarNotas()">
+            <select id="filtroUrgencia" onchange="mostrarNotas()">
+                <option value="todas">🎯 Todas las notas</option>
+                <option value="alta">🚨 Solo Altas</option>
+                <option value="media">⏳ Solo Medias</option>
+                <option value="baja">☕ Solo Bajas</option>
+            </select>
+        </div>
+
+        <!-- Contenedor de Notas -->
+        <div id="listaNotas"></div>
+    </div>
+
+    <script src="./js/app.js"></script>
 </body>
+
 </html>
