@@ -1,8 +1,15 @@
-// Registro de la PWA
+// Registro de la PWA y sincronización con el Service Worker
+let serviceWorkerReg = null;
+
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
-            .then(reg => console.log('Service Worker Pro activo'))
+            .then(reg => {
+                console.log('Service Worker Pro activo');
+                serviceWorkerReg = reg;
+                // Sincronizar alarmas existentes al arrancar
+                sincronizarAlarmasConSW();
+            })
             .catch(err => console.error('Error en SW', err));
     });
 
@@ -13,8 +20,7 @@ if ('serviceWorker' in navigator) {
 
 document.addEventListener('DOMContentLoaded', () => {
     mostrarNotas();
-    // Actualiza el contador de tiempo en pantalla cada minuto de manera automática
-    setInterval(mostrarNotas, 60000); 
+    setInterval(mostrarNotas, 60000); // Actualiza la vista cada minuto
 });
 
 function agregarNota() {
@@ -31,16 +37,19 @@ function agregarNota() {
         id: Date.now(),
         texto: texto,
         urgencia: urgencia,
-        fechaLimite: fechaLimite || null // Puede quedar vacía si no urge con fecha exacta
+        fechaLimite: fechaLimite || null
     };
 
     let notas = JSON.parse(localStorage.getItem('notas')) || [];
     notas.push(nuevaNota);
-    
-    // Las de mayor prioridad e intervalos más cortos de tiempo quedan arriba
+
     reordenarNotas(notas);
 
-    if (urgencia === 'alta' && Notification.permission === 'granted') {
+    // 🔥 PROGRAMAR ALARMA EN SEGUNDO PLANO
+    if (nuevaNota.fechaLimite && Notification.permission === 'granted') {
+        programarAlarmaEnSW(nuevaNota);
+    } else if (urgencia === 'alta' && Notification.permission === 'granted') {
+        // Si es urgente pero no tiene fecha, avisa inmediatamente
         new Notification('🚨 PRIORIDAD ALTA REGISTRADA', {
             body: texto,
             icon: 'img/Libret-App.png'
@@ -54,17 +63,32 @@ function agregarNota() {
 
 function reordenarNotas(notas) {
     notas.sort((a, b) => {
-        // Primero por urgencia alta
         if (a.urgencia === 'alta' && b.urgencia !== 'alta') return -1;
         if (a.urgencia !== 'alta' && b.urgencia === 'alta') return 1;
-        
-        // Si tienen igual urgencia, el que venza antes va primero
         if (a.fechaLimite && b.fechaLimite) {
             return new Date(a.fechaLimite) - new Date(b.fechaLimite);
         }
         return b.id - a.id;
     });
     localStorage.setItem('notas', JSON.stringify(notas));
+}
+
+// Envía la nota al Service Worker para que gestione el temporizador de fondo
+function programarAlarmaEnSW(nota) {
+    if (navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({
+            accion: 'PROGRAMAR_ALARMA',
+            nota: nota
+        });
+    }
+}
+
+// Avisa al SW de las alarmas actuales por si el navegador se reinició
+function sincronizarAlarmasConSW() {
+    const notas = JSON.parse(localStorage.getItem('notas')) || [];
+    notas.forEach(nota => {
+        if (nota.fechaLimite) programarAlarmaEnSW(nota);
+    });
 }
 
 function calcularTiempoRestante(fechaISO) {
@@ -86,7 +110,7 @@ function calcularTiempoRestante(fechaISO) {
     if (dias > 0) {
         return { texto: `Quedan ${dias}d y ${horas}h`, vencido: false };
     } else if (horasTotales > 0) {
-        return { texto: `Quedan ${horasTotales} horas`, vencido: false };
+        return { texto: `Quedan ${horas} horas`, vencido: false };
     } else {
         return { texto: `¡Quedan solo ${minutosTotales} minutos!`, vencido: false };
     }
@@ -96,11 +120,10 @@ function mostrarNotas() {
     const lista = document.getElementById('listaNotas');
     const buscarTexto = document.getElementById('buscarInput').value.toLowerCase();
     const filtroUrgencia = document.getElementById('filtroUrgencia').value;
-    
+
     lista.innerHTML = '';
     const notas = JSON.parse(localStorage.getItem('notas')) || [];
 
-    // Aplicar filtros en tiempo real
     const notasFiltradas = notas.filter(nota => {
         const coincideBusqueda = nota.texto.toLowerCase().includes(buscarTexto);
         const coincideUrgencia = filtroUrgencia === 'todas' || nota.urgencia === filtroUrgencia;
@@ -115,12 +138,11 @@ function mostrarNotas() {
     notasFiltradas.forEach(nota => {
         const infoTiempo = calcularTiempoRestante(nota.fechaLimite);
         const claseTiempo = infoTiempo.vencido ? 'tiempo-vencido' : '';
-        
-        // Formatear la fecha legible para humanos
+
         let fechaFormateada = '';
         if (nota.fechaLimite) {
             const f = new Date(nota.fechaLimite);
-            fechaFormateada = ` | Límite: ${f.toLocaleDateString()} ${f.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+            fechaFormateada = ` | Límite: ${f.toLocaleDateString()} ${f.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
         }
 
         const div = document.createElement('div');
@@ -142,5 +164,14 @@ function borrarNota(id) {
     let notas = JSON.parse(localStorage.getItem('notas')) || [];
     notas = notas.filter(nota => nota.id !== id);
     localStorage.setItem('notas', JSON.stringify(notas));
+
+    // Cancelar la alarma en el Service Worker para que no suene una tarea ya hecha
+    if (navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({
+            accion: 'CANCELAR_ALARMA',
+            id: id
+        });
+    }
+
     mostrarNotas();
 }
