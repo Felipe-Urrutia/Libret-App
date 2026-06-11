@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Libret-App: Mi Asistente</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="./css/estilos.css">
+</head>
+<body>
+
+<header>
+    <h1>🧠 Mi Asistente Olvidadizo</h1>
+    <p>Apunta antes de que se te vaya la idea</p>
+</header>
+
+<div class="container">
+    <textarea id="textoNota" placeholder="¿Qué tienes que recordar?" rows="3"></textarea>
+    
+    <select id="urgenciaNota">
+        <option value="alta">🚨 ¡Urgente / Hacer YA!</option>
+        <option value="media">⏳ Importante / Luego</option>
+        <option value="baja">☕ Baja prioridad / Rutina</option>
+    </select>
+    
+    <button onclick="agregarNota()">Guardar Recordatorio</button>
+
+    <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+
+    <div id="listaNotas"></div>
+</div>
+
+<script src="./js/app.js"></script>
+</body>
+</html>

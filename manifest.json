@@ -1,0 +1,16 @@
+{
+  "name": "Libret-App",
+  "short_name": "Libret-App",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#ecf0f1",
+  "theme_color": "#2c3e50",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "./img/Libret-App.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}

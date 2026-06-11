@@ -1,0 +1,97 @@
+:root {
+    --alta: #ff4d4d;
+    --media: #ffa500;
+    --baja: #2ecc71;
+    --oscuro: #2c3e50;
+    --claro: #ecf0f1;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--claro);
+    color: var(--oscuro);
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.container {
+    width: 100%;
+    max-width: 500px;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+input, select, button, textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: var(--oscuro);
+    color: white;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+.nota {
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+    color: white;
+    position: relative;
+    animation: fadeIn 0.3s ease;
+}
+
+/* Colores según la urgencia */
+.urgencia-alta {
+    background-color: var(--alta);
+    border-left: 8px solid #c0392b;
+}
+
+.urgencia-media {
+    background-color: var(--media);
+    border-left: 8px solid #d35400;
+    color: #333;
+}
+
+.urgencia-baja {
+    background-color: var(--baja);
+    border-left: 8px solid #27ae60;
+}
+
+.btn-borrar {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0,0,0,0.2);
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    width: auto;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
